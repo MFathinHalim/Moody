@@ -1,9 +1,9 @@
 type Journal = {
   userId: string;
-  date: Date;
+  date?: Date;
   mood: number;
   text: string;
   gratitude: string;
   tags: string[];
-  imageUrl: string;
+  imageUrl?: string;
 };

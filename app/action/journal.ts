@@ -2,14 +2,29 @@
 import { connectDB } from "@/lib/mongodb";
 import Journal from "@/model/journal";
 
-export async function createJournal({
+export default async function createJournal({
   userId,
   mood,
   text,
   gratitude,
   tags,
-}: Journal) {
+}: {
+  userId: string;
+  mood: number;
+  text: string;
+  gratitude?: string;
+  tags?: string[];
+}) {
+  console.log("📥 createJournal called with:", {
+    userId,
+    mood,
+    text,
+    gratitude,
+    tags,
+  });
+
   await connectDB();
+
   const newJournal = await Journal.create({
     userId,
     mood,
@@ -17,5 +32,7 @@ export async function createJournal({
     gratitude,
     tags,
   });
+
+  console.log("✅ new journal created:", newJournal);
   return JSON.parse(JSON.stringify(newJournal));
 }
