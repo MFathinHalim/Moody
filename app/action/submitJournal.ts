@@ -21,5 +21,5 @@ export async function submitJournal(formData: FormData) {
 
   await createJournal({ userId, mood, text, gratitude, tags });
 
-  redirect("/journals"); // redirect setelah sukses
+  redirect("/dashboard"); // redirect setelah sukses
 }
