@@ -15,9 +15,6 @@ const JournalSchema = new Schema(
       type: String,
       required: true,
     },
-    gratitude: {
-      type: String,
-    },
     tags: [
       {
         type: String,
@@ -34,6 +31,7 @@ const JournalSchema = new Schema(
   },
   { timestamps: true },
 );
+const modelList = mongoose.models || {};
 
-const Journal = models.Journal || mongoose.model("Journal", JournalSchema);
+const Journal = modelList.Journal || mongoose.model("Journal", JournalSchema);
 export default Journal;

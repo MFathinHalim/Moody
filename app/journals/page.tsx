@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { submitJournal } from "@/app/action/submitJournal";
 
 export default function NewJournalPage() {

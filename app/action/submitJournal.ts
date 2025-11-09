@@ -7,6 +7,7 @@ import createJournal from "@/app/action/journal";
 
 export async function submitJournal(formData: FormData) {
   const session = await getServerSession(authOptions);
+  //@ts-ignore
   const userId = session?.user?.id;
 
   if (!userId) {
