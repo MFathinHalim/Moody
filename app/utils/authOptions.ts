@@ -1,7 +1,6 @@
 // app/utils/authOptions.ts
 import GoogleProvider from "next-auth/providers/google";
 import NextAuth, { AuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/model/user";
 import jwt from "jsonwebtoken";
