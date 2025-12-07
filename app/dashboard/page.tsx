@@ -13,6 +13,7 @@ export default async function DashboardPage() {
 
   await connectDB();
 
+  //@ts-ignore
   const journals = await Journal.find({ userId: session.user.id })
     .sort({ date: -1 })
     .lean();
