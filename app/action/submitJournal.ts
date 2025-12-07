@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/utils/authOptions";
 import createJournal from "@/app/action/journal";
 
 export async function submitJournal(formData: FormData) {
