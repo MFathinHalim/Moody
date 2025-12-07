@@ -1,4 +1,5 @@
 type Journal = {
+  id: string;
   userId: string;
   date?: Date;
   mood: number;
