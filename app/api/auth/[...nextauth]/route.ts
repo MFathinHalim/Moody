@@ -27,7 +27,6 @@ export const authOptions: AuthOptions = {
         });
       }
 
-      // simpan _id di user object agar bisa dipakai di jwt callback
       (user as any)._id = existing._id.toString();
 
       return true;

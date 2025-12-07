@@ -68,18 +68,18 @@ function AllJournalsSection({
   }, [filtered.length]);
 
   return (
-    <section className="border h-[330px] overflow-y-auto scroll-y-auto border-green-200 bg-green-50 rounded-2xl shadow-sm p-6">
+    <section className="h-full max-h-[310px] overflow-y-auto scroll-y-auto bg-green-50/50 rounded-2xl shadow-sm p-6">
       <div className="flex flex-col sm:flex-row justify-between mb-4 gap-3">
         <div className="flex gap-2 w-full justify-between">
           <input
             type="text"
             placeholder="Search..."
-            className="border border-green-500 w-full rounded-md px-3 py-1 text-sm focus:ring-2 focus:ring-pink-400"
+            className="border border-black/10 w-full rounded-md px-3 py-1 text-sm focus:ring-2 focus:ring-pink-400"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
           <select
-            className="border border-green-500 rounded-md px-2 py-1 text-sm"
+            className="border border-black/10 rounded-md px-2 py-1 text-sm"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
           >
@@ -99,7 +99,7 @@ function AllJournalsSection({
           {visibleJournals.map((j) => (
             <div
               key={j._id}
-              className="p-4 rounded-xl bg-white/70 backdrop-blur-sm border border-green-500 hover:bg-white/90 transition-all shadow-sm"
+              className="p-4 rounded-xl bg-none border border-black/10 hover:bg-white/90 transition-all shadow-sm"
             >
               <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-500">
@@ -155,6 +155,7 @@ export default function DashboardClient({
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [query, setQuery] = useState("");
 
   const latestJournal = journals[0] || null;
 
@@ -261,201 +262,219 @@ export default function DashboardClient({
     return data;
   }, [journals, search, sortBy, activeTag]);
 
+  const handleEnter = (e: any) => {
+    if (e.key === "Enter" && query.trim() !== "") {
+      window.open(
+        `https://www.google.com/search?q=${encodeURIComponent(query)}`,
+        "_blank",
+      );
+    }
+  };
+
   return (
-    <main className="h-screen flex flex-col relative">
-      <div className="relative z-10 flex justify-between items-center md:px-10 md:pb-0 p-5 bg-white/70 backdrop-blur-md">
+    <main className="h-screen flex-col container mx-auto px-5 md:px-0">
+      <div className="z-10 flex justify-between align-center w-full pt-9 items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-700">Moody</h1>
+          <h1 className="text-2xl font-bold text-gray-700 bg-white/40 backdrop-blur-sm px-5 rounded-full py-2">
+            Moody
+          </h1>
         </div>
 
         <div className="relative">
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="flex items-center cursor-pointer gap-2 bg-white/40 px-2 py-1 rounded-full hover:bg-white/70 transition"
+            className="flex items-center cursor-pointer gap-2 bg-white/40 px-3 py-1 rounded-full hover:bg-white/70 transition"
           >
             {user?.image ? (
               <img
                 src={user.image}
                 referrerPolicy="no-referrer"
-                className="w-8 h-8 border rounded-full"
+                className="w-8 h-8 border rounded-full object-cover"
               />
             ) : (
               <div className="w-8 h-8 rounded-full bg-pink-300 flex items-center justify-center text-white font-bold">
                 {user?.name?.[0]?.toUpperCase() || "?"}
               </div>
             )}
-            <div>
-              <span className="text-md text-left hidden md:block font-medium text-gray-700">
+
+            {/* nama & email hanya muncul di desktop */}
+            <div className="hidden md:flex flex-col text-left">
+              <span className="text-sm font-semibold text-gray-800">
                 {user?.name || "User"}
               </span>
-              <span className="text-sm text-left hidden md:block font-medium text-gray-700/60">
-                {user?.email || "User"}
+              <span className="text-xs text-gray-600">
+                {user?.email || "email"}
               </span>
             </div>
-            <span className="text-gray-500">▼</span>
+
+            <span className="text-gray-600 hidden md:block">▼</span>
           </button>
 
           {showMenu && (
-            <div
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="right-0 w-full mt-2 w-40 text-center px-4 py-2 text-sm text-black-700 font-bold bg-red-100 border-gray-400 border hover:bg-pink-100 rounded-md cursor-pointer transition"
-            >
-              Logout
-            </div>
+            <>
+              {/* backdrop biar klik luar nutup */}
+              <div
+                className="fixed inset-0 z-50"
+                onClick={() => setShowMenu(false)}
+              ></div>
+
+              <div className="absolute right-0 mt-2 z-50 w-40 bg-white shadow-lg rounded-md border p-2 animate-fadeIn">
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="w-full py-2 z-50 text-center text-sm font-medium text-red-600 hover:bg-red-100 rounded-md transition"
+                >
+                  Logout
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>
+      <div className="flex flex-col justify-center my-10 md:p-8 align-center mx-auto py-3  md:bg-white/20 rounded-lg backdrop-blur-sm">
+        <p className="text-3xl font-bold text-gray-600 mb-3">
+          {greeting}
+          <br className="md:hidden" /> {user?.name || "Friend"}
+        </p>
+        <div className="flex flex-wrap gap-5 w-full ">
+          {/* 📈 Mood Tracker */}
 
-      <div className="relative z-10 flex-1 overflow-y-auto md:p-5 space-y-5">
-        <div className="p-5 space-y-5">
-          <p className="text-3xl font-bold text-gray-600">
-            {greeting}
-            <br className="md:hidden" /> {user?.name || "Friend"}
-          </p>
-          <div className="flex flex-wrap gap-5 w-full ">
-            {/* 📈 Mood Tracker */}
-
-            <div className="flex-2 flex flex-col gap-5">
-              <section className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                <div className="p-6 bg-pink-50 rounded-lg text-center shadow-sm">
-                  <h3 className="text-sm text-gray-600">Total Journals</h3>
-                  <p className="text-2xl font-bold">{totalJournals}</p>
-                </div>
-                <div className="p-6 bg-green-50 rounded-lg text-center shadow-sm">
-                  <h3 className="text-sm text-gray-600">Average Mood</h3>
-                  <p className="text-2xl font-bold">
-                    {moodEmojis[Math.round(avgMood)]}
-                  </p>
-                </div>
-                <div className="p-6 bg-yellow-50 rounded-lg text-center shadow-sm">
-                  <h3 className="text-sm text-gray-600">Top Mood</h3>
-                  <p className="text-2xl font-bold">{topMood}</p>
-                </div>
-                <div className="p-6 bg-orange-50 rounded-lg text-center shadow-sm">
-                  <h3 className="text-3xl text-gray-600">🔥</h3>
-                  <p className="text-sm font-bold text-orange-600">
-                    {streak} days
-                  </p>
-                </div>
-              </section>
-              <section className="min-w-[320px] border border-pink-200 p-6 rounded-2xl shadow-sm bg-gradient-to-br from-[#FEE2E2] to-[#FDE8E8] relative overflow-hidden">
-                <div className="absolute -top-10 -right-10 w-40 h-40 bg-pink-300 rounded-full blur-3xl opacity-40"></div>
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="font-bold text-xl text-gray-800">
-                      Your Mood
-                    </h2>
-                    <span className="text-sm text-gray-500">
-                      Last {chartData.length} days
-                    </span>
-                  </div>
-                  {chartData.length === 0 ? (
-                    <p className="text-gray-600 text-sm italic text-center py-10">
-                      No data yet. Start journaling today! 💫
-                    </p>
-                  ) : (
-                    <div className="w-full h-[300px] bg-white/60 backdrop-blur-sm rounded-xl p-3 shadow-inner">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={chartData}>
-                          <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-                          <YAxis
-                            domain={[0, 5]}
-                            ticks={[0, 1, 2, 3, 4, 5]}
-                            tickFormatter={(v) => moodEmojis[v] || "❓"}
-                          />
-                          <Tooltip
-                            contentStyle={{
-                              backgroundColor: "#fff",
-                              borderRadius: "0.5rem",
-                              border: "1px solid #E5E7EB",
-                            }}
-                            formatter={(v) => moodEmojis[v] || "❓"}
-                            labelFormatter={(label) => `📅 ${label}`}
-                          />
-                          <Line
-                            type="monotone"
-                            dataKey="mood"
-                            stroke="#F9A8D4"
-                            strokeWidth={3}
-                            dot={{
-                              r: 5,
-                              fill: "#F9A8D4",
-                              stroke: "#000000",
-                              strokeWidth: 1,
-                            }}
-                          />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </div>
-                  )}
-                </div>
-              </section>
-
-              {/* 💕 Add Journal */}
-              <section className="border border-gray-500/50 h-fit px-4 py-5 bg-white rounded-xl shadow-inner-lg">
-                <button
-                  id="add-journal-button"
-                  className="px-4 py-2 text-left border border-gray-300 text-gray-500 w-full rounded-none cursor-pointer transition"
-                  onClick={() => setShowModal(true)}
-                >
-                  Today I feel...
-                </button>
-              </section>
-            </div>
-
-            {/* 📒 Right side */}
-            <div className="flex flex-1 flex-col gap-5">
-              <section className="border p-5 rounded-2xl shadow-sm bg-gradient-to-br from-[#DCFCE7] to-[#BBF7D0] border-green-200 text-center">
-                <h2 className="font-bold text-xl text-gray-800 mb-2">
-                  Daily Quote
-                </h2>
-                <p className="italic text-gray-700 text-sm">
-                  "Even small steps count. Keep going, you are doing amazing!"
+          <div className="flex-2 flex flex-col gap-5">
+            <section className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+              <div className="p-6 bg-pink-50/40 rounded-lg text-center shadow-sm">
+                <h3 className="text-sm text-gray-600">Total Journals</h3>
+                <p className="text-2xl font-bold">{totalJournals}</p>
+              </div>
+              <div className="p-6 bg-green-50/40 rounded-lg text-center shadow-sm">
+                <h3 className="text-sm text-gray-600">Average Mood</h3>
+                <p className="text-2xl font-bold">
+                  {moodEmojis[Math.round(avgMood)]}
                 </p>
-              </section>
-              <section className="border p-5 rounded-2xl max-h-fit shadow-md border-pink-200 bg-gradient-to-br from-[#fef3f3] to-[#fce7f3]">
-                {!latestJournal ? (
+              </div>
+              <div className="p-6 bg-yellow-50/40 rounded-lg text-center shadow-sm">
+                <h3 className="text-sm text-gray-600">Top Mood</h3>
+                <p className="text-2xl font-bold">{topMood}</p>
+              </div>
+              <div className="p-6 bg-orange-50/40 rounded-lg text-center shadow-sm">
+                <h3 className="text-3xl text-gray-600">🔥</h3>
+                <p className="text-sm font-bold text-orange-600">
+                  {streak} days
+                </p>
+              </div>
+            </section>
+            <section className="min-w-[320px] border border-pink-200 p-6 rounded-2xl shadow-sm bg-pink-50/70 relative overflow-hidden">
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="font-bold text-xl text-gray-800">Your Mood</h2>
+                  <span className="text-sm text-gray-500">
+                    Last {chartData.length} days
+                  </span>
+                </div>
+                {chartData.length === 0 ? (
                   <p className="text-gray-600 text-sm italic text-center py-10">
-                    No journal found. Start writing one today! ✨
+                    No data yet. Start journaling today! 💫
                   </p>
                 ) : (
-                  <div className="text-sm flex flex-col space-y-3 justify-between">
-                    <div>
-                      <p className="text-sm text-gray-500">
-                        {new Date(latestJournal.date).toLocaleString("id-ID")}
-                      </p>
-                      <h1 className="text-2xl font-bold mt-1 text-gray-800">
-                        {latestJournal.text || "—"}
-                      </h1>
-                    </div>
-                    <div className="flex justify-between items-center text-gray-600 pt-2">
-                      <div className="flex flex-wrap gap-1">
-                        {latestJournal.tags?.length > 0 ? (
-                          latestJournal.tags.map((tag: string) => (
-                            <span
-                              key={tag}
-                              className="text-xs bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full"
-                            >
-                              #{tag}
-                            </span>
-                          ))
-                        ) : (
-                          <span className="text-xs text-gray-400">No tags</span>
-                        )}
-                      </div>
-                      <p className="text-3xl">
-                        {moodEmojis[latestJournal.mood] || "❓"}
-                      </p>
-                    </div>
+                  <div className="w-full h-[300px] rounded-xl">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={chartData}>
+                        <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                        <YAxis
+                          domain={[0, 5]}
+                          ticks={[0, 1, 2, 3, 4, 5]}
+                          tickFormatter={(v) => moodEmojis[v] || "❓"}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "#fff",
+                            borderRadius: "0.5rem",
+                            border: "1px solid #E5E7EB",
+                          }}
+                          formatter={(v) => moodEmojis[v] || "❓"}
+                          labelFormatter={(label) => `📅 ${label}`}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="mood"
+                          stroke="#F9A8D4"
+                          strokeWidth={3}
+                          dot={{
+                            r: 5,
+                            fill: "#F9A8D4",
+                            stroke: "#000000",
+                            strokeWidth: 1,
+                          }}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
                   </div>
                 )}
-              </section>
-              <AllJournalsSection journals={journals} moodEmojis={moodEmojis} />
-            </div>
+              </div>
+            </section>
+
+            {/* 💕 Add Journal */}
+            <section className="border border-gray-500/50 h-fit px-4 py-5 bg-white/50 rounded-xl shadow-inner-lg">
+              <button
+                id="add-journal-button"
+                className="text-left text-gray-500 w-full pr-5 rounded-none cursor-pointer transition"
+                onClick={() => setShowModal(true)}
+              >
+                Today I feel...
+              </button>
+            </section>
+          </div>
+
+          {/* 📒 Right side */}
+          <div className="flex flex-1 flex-col gap-5">
+            <section className="border border-gray-500/50 h-fit px-4 py-5 bg-white/50 rounded-xl shadow-inner-lg">
+              <input
+                placeholder="Search on Google"
+                className="text-left text-gray-500 w-full pr-5 rounded-none cursor-pointer transition focus:outline-none"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleEnter}
+              />
+            </section>
+            <section className="border p-5 rounded-2xl max-h-fit shadow-sm border-pink-200 bg-pink-50/50">
+              {!latestJournal ? (
+                <p className="text-gray-600 text-sm italic text-center py-10">
+                  No journal found. Start writing one today! ✨
+                </p>
+              ) : (
+                <div className="text-sm flex flex-col space-y-3 justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500">
+                      {new Date(latestJournal.date).toLocaleString("id-ID")}
+                    </p>
+                    <h1 className="text-2xl font-bold mt-1 text-gray-800">
+                      {latestJournal.text || "—"}
+                    </h1>
+                  </div>
+                  <div className="flex justify-between items-center text-gray-600 pt-2">
+                    <div className="flex flex-wrap gap-1">
+                      {latestJournal.tags?.length > 0 ? (
+                        latestJournal.tags.map((tag: string) => (
+                          <span
+                            key={tag}
+                            className="text-xs bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full"
+                          >
+                            #{tag}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-xs text-gray-400">No tags</span>
+                      )}
+                    </div>
+                    <p className="text-3xl">
+                      {moodEmojis[latestJournal.mood] || "❓"}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </section>
+            <AllJournalsSection journals={journals} moodEmojis={moodEmojis} />
           </div>
         </div>
       </div>
-
       {showModal && (
         <div
           className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn"
