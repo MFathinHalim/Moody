@@ -8,6 +8,7 @@ import DashboardClient from "./DashboardClient";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
+  //@ts-ignore
   if (!session?.user?.id) redirect("/api/auth/signin");
 
   await connectDB();
