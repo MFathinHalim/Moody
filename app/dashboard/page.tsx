@@ -1,7 +1,7 @@
 // app/dashboard/page.tsx
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/utils/authOptions";
 import { connectDB } from "@/lib/mongodb";
 import Journal from "@/model/journal";
 import DashboardClient from "./DashboardClient";
