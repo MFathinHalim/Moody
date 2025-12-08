@@ -47,6 +47,7 @@ export const authOptions: AuthOptions = {
         id: token.id as string,
         name: token.name,
         email: token.email,
+        //@ts-ignore
         image: token.image,
       };
       return session;
